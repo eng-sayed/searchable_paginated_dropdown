@@ -61,8 +61,7 @@ class SearchableDropdown<T> extends StatefulWidget {
     required Future<List<SearchableDropdownMenuItem<T>>?> Function(
       int,
       String?,
-    )?
-        paginatedRequest,
+    )? paginatedRequest,
     int? requestItemCount,
     Key? key,
     SearchableDropdownController<T>? controller,
@@ -460,28 +459,28 @@ class _DropDown<T> extends StatelessWidget {
     /// Dialog offset from dropdown.
     required double dialogOffset,
   }) {
-    var isReversed = false;
-    final deviceHeight = context.deviceHeight;
-    final dropdownGlobalPointBounds = controller.key.globalPaintBounds;
-    final alertDialogMaxHeight = dropDownMaxHeight ?? deviceHeight * 0.35;
+    // var isReversed = false;
+    // final deviceHeight = context.deviceHeight;
+    // final dropdownGlobalPointBounds = controller.key.globalPaintBounds;
+    // final alertDialogMaxHeight = dropDownMaxHeight ?? deviceHeight * 0.35;
 
-    final dropdownPositionFromBottom = dropdownGlobalPointBounds != null
-        ? deviceHeight - dropdownGlobalPointBounds.bottom
-        : null;
-    var dialogPositionFromBottom = dropdownPositionFromBottom != null
-        ? dropdownPositionFromBottom - alertDialogMaxHeight
-        : null;
-    if (dialogPositionFromBottom != null) {
-      //If dialog couldn't fit the screen, reverse it
-      if (dialogPositionFromBottom <= 0) {
-        isReversed = true;
-        final dropdownHeight = dropdownGlobalPointBounds?.height ?? 54;
-        dialogPositionFromBottom +=
-            alertDialogMaxHeight + dropdownHeight - dialogOffset;
-      } else {
-        dialogPositionFromBottom -= dialogOffset;
-      }
-    }
+    // final dropdownPositionFromBottom = dropdownGlobalPointBounds != null
+    //     ? deviceHeight - dropdownGlobalPointBounds.bottom
+    //     : null;
+    // var dialogPositionFromBottom = dropdownPositionFromBottom != null
+    //     ? dropdownPositionFromBottom - alertDialogMaxHeight
+    //     : null;
+    // if (dialogPositionFromBottom != null) {
+    //   //If dialog couldn't fit the screen, reverse it
+    //   if (dialogPositionFromBottom <= 0) {
+    //     isReversed = true;
+    //     final dropdownHeight = dropdownGlobalPointBounds?.height ?? 54;
+    //     dialogPositionFromBottom +=
+    //         alertDialogMaxHeight + dropdownHeight - dialogOffset;
+    //   } else {
+    //     dialogPositionFromBottom -= dialogOffset;
+    //   }
+    // }
     if (controller.items == null) {
       if (paginatedRequest != null) {
         controller.getItemsWithPaginatedRequest(page: 1, isNewSearch: true);
@@ -493,44 +492,37 @@ class _DropDown<T> extends StatelessWidget {
     //Call needs to be outside showDialog in case it has setState
     onShowDropdown?.call();
     //Show the dialog
-    showDialog<void>(
+    // showDialog<void>(
+    showModalBottomSheet<void>(
       context: context,
       builder: (context) {
-        var reCalculatePosition = dialogPositionFromBottom;
-        final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-        //If keyboard pushes the dialog, recalculate the dialog's position.
-        if (reCalculatePosition != null &&
-            reCalculatePosition <= keyboardHeight) {
-          reCalculatePosition =
-              (keyboardHeight - reCalculatePosition) + reCalculatePosition;
-        }
+        // var reCalculatePosition = dialogPositionFromBottom;
+        // final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+        // //If keyboard pushes the dialog, recalculate the dialog's position.
+        // if (reCalculatePosition != null &&
+        //     reCalculatePosition <= keyboardHeight) {
+        //   reCalculatePosition =
+        //       (keyboardHeight - reCalculatePosition) + reCalculatePosition;
+        // }
         return Padding(
-          padding: EdgeInsets.only(
-            bottom: reCalculatePosition ?? 0,
-            left: isDialogExpanded ? 16 : dropdownGlobalPointBounds?.left ?? 0,
-            right: isDialogExpanded ? 16 : 0,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: isDialogExpanded
-                ? CrossAxisAlignment.center
-                : CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: alertDialogMaxHeight,
-                width:
-                    isDialogExpanded ? null : dropdownGlobalPointBounds?.width,
-                child: _DropDownCard(
-                  controller: controller,
-                  isReversed: isReversed,
-                  noRecordText: noRecordText,
-                  onChanged: onChanged,
-                  paginatedRequest: paginatedRequest,
-                  searchHintText: searchHintText,
-                  changeCompletionDelay: changeCompletionDelay,
-                ),
+          padding: EdgeInsets.only(left: 16, right: 16
+              // bottom: reCalculatePosition ?? 0,
+              // left: isDialogExpanded ? 16 : dropdownGlobalPointBounds?.left ?? 0,
+              // right: isDialogExpanded ? 16 : 0,
               ),
-            ],
+          child: SizedBox(
+            height: 400,
+            // width:
+            //     isDialogExpanded ? null : dropdownGlobalPointBounds?.width,
+            child: _DropDownCard(
+              controller: controller,
+              isReversed: false,
+              noRecordText: noRecordText,
+              onChanged: onChanged,
+              paginatedRequest: paginatedRequest,
+              searchHintText: searchHintText,
+              changeCompletionDelay: changeCompletionDelay,
+            ),
           ),
         );
       },
@@ -591,8 +583,8 @@ class _DropDownCard<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment:
-          isReversed ? MainAxisAlignment.end : MainAxisAlignment.start,
+      // mainAxisAlignment:
+      //     isReversed ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
         Flexible(
           child: Card(
@@ -804,10 +796,13 @@ class _DropDownListViewState<T> extends State<_DropDownListView<T>> {
     if (maxScroll - currentScroll <= sensitivity) {
       if (searchText.isNotEmpty) {
         dropdownController.getItemsWithPaginatedRequest(
-            page: dropdownController.page, key: searchText,);
+          page: dropdownController.page,
+          key: searchText,
+        );
       } else {
         dropdownController.getItemsWithPaginatedRequest(
-            page: dropdownController.page,);
+          page: dropdownController.page,
+        );
       }
     }
   }
