@@ -37,7 +37,7 @@ class CustomSearchBar extends StatelessWidget {
       padding: EdgeInsets.zero,
       disableTabEffect: true,
       onTap: myFocusNode.requestFocus,
-      child: isOutlined
+      child: /* isOutlined
           ? DecoratedBox(
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -55,21 +55,16 @@ class CustomSearchBar extends StatelessWidget {
                 style: style,
               ),
             )
-          : Card(
-              margin: EdgeInsets.zero,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-              ),
-              child: _SearchBarTextField(
-                onChangeComplete: onChangeComplete,
-                changeCompletionDelay: changeCompletionDelay,
-                hintText: hintText,
-                leadingIcon: leadingIcon,
-                focusNode: focusNode,
-                controller: controller,
-                style: style,
-              ),
-            ),
+          : */
+          _SearchBarTextField(
+        onChangeComplete: onChangeComplete,
+        changeCompletionDelay: changeCompletionDelay,
+        hintText: hintText,
+        leadingIcon: leadingIcon,
+        focusNode: focusNode,
+        controller: controller,
+        style: style,
+      ),
     );
   }
 }
@@ -106,24 +101,55 @@ class _SearchBarTextField extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8),
-      child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        onChanged: (value) async {
-          await cancelableOperation?.cancel();
-          startCancelableOperation();
-          await cancelableOperation?.value.whenComplete(() {
-            onChangeComplete?.call(value);
-          });
-        },
-        style: style,
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.zero,
-          isDense: true,
-          border: InputBorder.none,
-          hintText: hintText,
-          icon: leadingIcon,
+      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.white, width: 1.0),
+          borderRadius: BorderRadius.all(
+            Radius.circular(16),
+          ),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.6),
+                blurRadius: 4,
+                offset: const Offset(0.0, 0.25))
+          ],
+        ),
+        child: TextField(
+          controller: controller,
+          focusNode: focusNode,
+          textInputAction: TextInputAction.send,
+          onChanged: (value) async {
+            await cancelableOperation?.cancel();
+            startCancelableOperation();
+            await cancelableOperation?.value.whenComplete(() {
+              onChangeComplete?.call(value);
+            });
+          },
+          // style: style,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+            contentPadding:
+                const EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+            suffixIcon: Icon(
+              Icons.search_rounded,
+              size: 24,
+              color: Color.fromRGBO(14, 65, 113, 1),
+            ),
+            hintStyle: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 18,
+              color: Color.fromRGBO(159, 183, 205, 1),
+            ),
+            hintText: hintText ?? 'Search ...',
+            icon: leadingIcon,
+          ),
+          cursorColor: Color.fromRGBO(159, 183, 205, 1),
         ),
       ),
     );

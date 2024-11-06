@@ -495,6 +495,11 @@ class _DropDown<T> extends StatelessWidget {
     // showDialog<void>(
     showModalBottomSheet<void>(
       context: context,
+      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      isScrollControlled: true,
       builder: (context) {
         // var reCalculatePosition = dialogPositionFromBottom;
         // final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
@@ -504,27 +509,26 @@ class _DropDown<T> extends StatelessWidget {
         //   reCalculatePosition =
         //       (keyboardHeight - reCalculatePosition) + reCalculatePosition;
         // }
-        return Padding(
-          padding: EdgeInsets.only(left: 16, right: 16
+        return ClipRRect(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.64,
+              // padding: EdgeInsets.only(left: 16, right: 16
               // bottom: reCalculatePosition ?? 0,
               // left: isDialogExpanded ? 16 : dropdownGlobalPointBounds?.left ?? 0,
               // right: isDialogExpanded ? 16 : 0,
+              // ),
+              child: _DropDownCard(
+                controller: controller,
+                isReversed: false,
+                noRecordText: noRecordText,
+                onChanged: onChanged,
+                paginatedRequest: paginatedRequest,
+                searchHintText: searchHintText,
+                changeCompletionDelay: changeCompletionDelay,
               ),
-          child: SizedBox(
-            height: 400,
-            // width:
-            //     isDialogExpanded ? null : dropdownGlobalPointBounds?.width,
-            child: _DropDownCard(
-              controller: controller,
-              isReversed: false,
-              noRecordText: noRecordText,
-              onChanged: onChanged,
-              paginatedRequest: paginatedRequest,
-              searchHintText: searchHintText,
-              changeCompletionDelay: changeCompletionDelay,
-            ),
-          ),
-        );
+            ));
       },
       barrierColor: Colors.transparent,
     ).then(((_) => onDismissDropdown?.call()));
@@ -582,19 +586,25 @@ class _DropDownCard<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      // mainAxisAlignment:
-      //     isReversed ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        Flexible(
-          child: Card(
-            margin: EdgeInsets.zero,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Column(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.white, width: 0),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            // mainAxisAlignment:
+            //     isReversed ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: [
+              Column(
                 mainAxisSize: MainAxisSize.min,
                 verticalDirection:
                     isReversed ? VerticalDirection.up : VerticalDirection.down,
@@ -615,10 +625,10 @@ class _DropDownCard<T> extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -635,27 +645,24 @@ class _DropDownSearchBar<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: CustomSearchBar(
-        changeCompletionDelay:
-            changeCompletionDelay ?? const Duration(milliseconds: 200),
-        hintText: searchHintText ?? 'Search',
-        isOutlined: true,
-        leadingIcon: const Icon(Icons.search, size: 24),
-        onChangeComplete: (value) {
-          controller.searchText = value;
-          if (controller.items != null) {
-            controller.fillSearchedList(value);
-            return;
-          }
-          controller.getItemsWithPaginatedRequest(
-            key: value == '' ? null : value,
-            page: 1,
-            isNewSearch: true,
-          );
-        },
-      ),
+    return CustomSearchBar(
+      changeCompletionDelay:
+          changeCompletionDelay ?? const Duration(milliseconds: 200),
+      hintText: searchHintText ?? 'Search',
+      isOutlined: true,
+      // leadingIcon: const Icon(Icons.search, size: 24),
+      onChangeComplete: (value) {
+        controller.searchText = value;
+        if (controller.items != null) {
+          controller.fillSearchedList(value);
+          return;
+        }
+        controller.getItemsWithPaginatedRequest(
+          key: value == '' ? null : value,
+          page: 1,
+          isNewSearch: true,
+        );
+      },
     );
   }
 }
